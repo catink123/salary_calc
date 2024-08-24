@@ -9,8 +9,8 @@ class DoubleField extends StatefulWidget {
     this.isEnabled = true,
   });
 
-  final double value;
-  final void Function(double value) onChange;
+  final String value;
+  final void Function(double value, String textValue) onChange;
   final bool isEnabled;
 
   @override
@@ -36,8 +36,8 @@ class _DoubleFieldState extends State<DoubleField> {
     );
   }
 
-  void _onFieldUpdate() {
-    widget.onChange(double.tryParse(textController.text) ?? 0);
+  void _onFieldUpdate(String value) {
+    widget.onChange(double.tryParse(value) ?? 0, value);
   }
 
   void _updateValue(int delta) {
@@ -48,7 +48,7 @@ class _DoubleFieldState extends State<DoubleField> {
       selection: TextSelection.collapsed(offset: newValueStr.length),
       text: newValueStr,
     );
-    widget.onChange(newValue);
+    widget.onChange(newValue, newValueStr);
   }
 
   @override
@@ -60,22 +60,22 @@ class _DoubleFieldState extends State<DoubleField> {
           child: Focus(
             child: TextField(
               enabled: widget.isEnabled,
-              keyboardType: TextInputType.number,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp('[0-9.]'))
+                FilteringTextInputFormatter.allow(RegExp('[0-9]+[,.]?[0-9]*')),
+                TextInputFormatter.withFunction(
+                  (oldValue, newValue) => newValue.copyWith(
+                    text: newValue.text.replaceAll(',', '.'),
+                  ),
+                ),
               ],
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
               ),
               controller: textController,
-              onEditingComplete: _onFieldUpdate,
-              // onChanged: _onFieldUpdate,
+              onChanged: _onFieldUpdate,
             ),
-            onFocusChange: (focusLost) {
-              if (!focusLost) {
-                _onFieldUpdate();
-              }
-            },
           ),
         ),
         const SizedBox(width: 5.0),

@@ -23,6 +23,7 @@ class EntryDialog extends StatefulWidget {
 class _EntryDialogState extends State<EntryDialog> {
   String title = "";
   double hours = 0;
+  String hoursStr = '0';
 
   @override
   void initState() {
@@ -30,6 +31,7 @@ class _EntryDialogState extends State<EntryDialog> {
 
     title = widget.initialTitle;
     hours = widget.initialHours;
+    hoursStr = hours.toString();
   }
 
   final _dialogFormKey = GlobalKey<FormState>();
@@ -76,9 +78,12 @@ class _EntryDialogState extends State<EntryDialog> {
                 Text('Hours', style: Theme.of(context).textTheme.titleMedium),
                 IntrinsicWidth(
                   child: DoubleField(
-                    value: hours,
-                    onChange: (val) {
-                      setState(() => hours = val);
+                    value: hoursStr,
+                    onChange: (val, valStr) {
+                      setState(() {
+                        hours = val;
+                        hoursStr = valStr;
+                      });
                     },
                   ),
                 ),

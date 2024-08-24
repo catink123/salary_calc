@@ -1,5 +1,5 @@
 name: salary_calc
-description: "A new Flutter project."
+description: "Salary Calculator for Zavodchan"
 publish_to: 'none'
 version: 0.1.0
 
@@ -10,6 +10,7 @@ dependencies:
   collection_providers: ^0.2.2
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
   intl: ^0.19.0
   provider: ^6.1.2
   shared_preferences: ^2.3.1
@@ -22,3 +23,24 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+flutter_launcher_icons:
+  image_path_android: "assets/images/ic_launcher.png"
+  image_path_ios: "assets/images/AppIcon.png"
+  android: true
+  ios: true
+  adaptive_icon_background: "assets/images/ic_launcher_background.png"
+  adaptive_icon_foreground: "assets/images/ic_launcher_foreground.png"
+  adaptive_icon_monochrome: "assets/images/ic_launcher_monochrome.png"
+  web:
+    generate: true
+    image_path: "assets/images/AppIcon.png"
+    background_color: "#9649A3"
+    theme_color: "#9649A3"
+  windows:
+    generate: true
+    image_path: "assets/images/AppIcon.png"
+    icon_size: 256
+  macos:
+    generate: true
+    image_path: "assets/images/AppIcon.png"

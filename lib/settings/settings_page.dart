@@ -157,7 +157,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: 'Currency',
             child: IntrinsicWidth(
               child: TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'BYN, RUB..',
                 ),

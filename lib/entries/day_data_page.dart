@@ -25,7 +25,6 @@ class DayDataEntryTile extends StatelessWidget {
       onEdit();
       return false;
     } else if (direction == DismissDirection.endToStart) {
-      onRemove();
       return true;
     }
     return null;
@@ -39,22 +38,32 @@ class DayDataEntryTile extends StatelessWidget {
         DismissDirection.endToStart: 0.8,
       },
       confirmDismiss: _onDismiss,
-      background: Container(color: Colors.green),
-      secondaryBackground: Container(color: Colors.red),
-      key: ValueKey(title),
-      child: Card.outlined(
-        margin: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Container(
-          padding: const EdgeInsets.all(15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
-              Text('$hours hours',
-                  style: Theme.of(context).textTheme.bodyMedium),
-            ],
-          ),
+      onDismissed: (direction) {
+        if (direction == DismissDirection.endToStart) {
+          onRemove();
+        }
+      },
+      background: Container(
+        color: Colors.green,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: const Align(
+          alignment: Alignment.centerLeft,
+          child: Icon(Icons.edit),
         ),
+      ),
+      secondaryBackground: Container(
+        color: Colors.red,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: const Align(
+          alignment: Alignment.centerRight,
+          child: Icon(Icons.delete),
+        ),
+      ),
+      key: ValueKey(title),
+      child: ListTile(
+        title: Text(title, style: Theme.of(context).textTheme.titleMedium),
+        trailing:
+            Text('$hours hours', style: Theme.of(context).textTheme.bodyMedium),
       ),
     );
   }
@@ -116,21 +125,20 @@ class DayDataPage extends StatelessWidget {
       );
     }
 
-    return ListView(
-      children: dayData.entries
-          .map<List<Widget>>(
-            (entry) => [
-              DayDataEntryTile(
-                title: entry.key,
-                hours: entry.value,
-                onEdit: () => onEdit(entry.key),
-                onRemove: () => onRemove(entry.key),
-              ),
-              const SizedBox(height: 10.0),
-            ],
-          )
-          .expand<Widget>((element) => element)
-          .toList(),
+    return ListView.separated(
+      itemCount: dayData.length,
+      itemBuilder: (context, index) {
+        final entry = dayData.entries.elementAt(index);
+        return DayDataEntryTile(
+          title: entry.key,
+          hours: entry.value,
+          onEdit: () => onEdit(entry.key),
+          onRemove: () => onRemove(entry.key),
+        );
+      },
+      separatorBuilder: (context, index) => const Divider(
+        height: 0,
+      ),
     );
   }
 
@@ -203,10 +211,13 @@ class DayDataPage extends StatelessWidget {
         context.select<MapChangeNotifier<DateTime, DayData>, DayData?>(
             (value) => value[day]);
 
-    const Widget noEntriesView = Center(
-      child: Text(
-        'No entries. Add new ones using the button in the corner.',
-        textAlign: TextAlign.center,
+    Widget noEntriesView = Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: const Text(
+          'No entries. Add new ones using the button in the corner.',
+          textAlign: TextAlign.center,
+        ),
       ),
     );
 
