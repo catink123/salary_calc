@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:salary_calc/db.dart';
+import 'package:sembast/sembast.dart';
 
 typedef PercentToPayMap = Map<double, int>;
 
@@ -21,28 +20,26 @@ class Settings with ChangeNotifier {
   PercentToPayMap _ptpMap = _defaultPTPMap;
   String _currency = "";
 
-  late final SharedPreferences sharedPrefs;
+  final _store = StoreRef<String, dynamic>('settings');
 
-  Future<void> _initSharedPrefs() async {
-    sharedPrefs = await SharedPreferences.getInstance();
-
-    _shiftOffset = sharedPrefs.getInt("shiftOffset") ?? 0;
-    _shiftDuration = sharedPrefs.getInt("shiftDuration") ?? 3;
-    _weekendDuration = sharedPrefs.getInt("weekendDuration");
-    _shiftNorm = sharedPrefs.getInt("shiftNorm") ?? 12;
-    final ptpMapJson = sharedPrefs.getString("ptpMap");
-    if (ptpMapJson != null) {
-      _ptpMap = jsonDecode(ptpMapJson);
-    } else {
-      _ptpMap = _defaultPTPMap;
-    }
-    _currency = sharedPrefs.getString("currency") ?? '';
+  void _init() {
+    _shiftOffset =
+        _store.record('shiftOffset').getSync(DB.instance) as int? ?? 0;
+    _shiftDuration =
+        _store.record('shiftDuration').getSync(DB.instance) as int? ?? 3;
+    _weekendDuration =
+        _store.record('weekendDuration').getSync(DB.instance) as int?;
+    _shiftNorm = _store.record('shiftNorm').getSync(DB.instance) as int? ?? 12;
+    _ptpMap =
+        _store.record('ptpMap').getSync(DB.instance) as Map<double, int>? ??
+            _defaultPTPMap;
+    _currency = _store.record('currency').getSync(DB.instance) as String? ?? '';
 
     notifyListeners();
   }
 
   Settings() {
-    _initSharedPrefs();
+    _init();
   }
 
   int get shiftOffset => _shiftOffset;
@@ -54,41 +51,42 @@ class Settings with ChangeNotifier {
 
   set shiftOffset(int val) {
     _shiftOffset = val;
-    sharedPrefs.setInt("shiftOffset", val);
+
+    _store.record('shiftOffset').put(DB.instance, val);
     notifyListeners();
   }
 
   set shiftDuration(int val) {
     _shiftDuration = val;
-    sharedPrefs.setInt("shiftDuration", val);
+    _store.record('shiftDuration').put(DB.instance, val);
     notifyListeners();
   }
 
   set weekendDuration(int? val) {
     _weekendDuration = val;
     if (val != null) {
-      sharedPrefs.setInt("weekendDuration", val);
+      _store.record('weekendDuration').put(DB.instance, val);
     } else {
-      sharedPrefs.remove("weekendDuration");
+      _store.record('weekendDuration').delete(DB.instance);
     }
     notifyListeners();
   }
 
   set shiftNorm(int val) {
     _shiftNorm = val;
-    sharedPrefs.setInt("shiftNorm", val);
+    _store.record('shiftNorm').put(DB.instance, val);
     notifyListeners();
   }
 
   set ptpMap(PercentToPayMap val) {
     _ptpMap = val;
-    sharedPrefs.setString("ptpMap", jsonEncode(val));
+    _store.record('ptpMap').put(DB.instance, val);
     notifyListeners();
   }
 
   set currency(String val) {
     _currency = val;
-    sharedPrefs.setString("currency", val);
+    _store.record('currency').put(DB.instance, val);
     notifyListeners();
   }
 }

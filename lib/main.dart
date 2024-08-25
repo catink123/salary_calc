@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:salary_calc/db.dart';
 import 'package:salary_calc/entries/calendar_data.dart';
 import 'package:salary_calc/entries/day_data_page.dart';
 import 'package:salary_calc/settings/settings_page.dart';
 import 'package:salary_calc/settings/settings.dart';
 import 'package:salary_calc/shift_calendar.dart';
 
-void main() {
-  initializeDateFormatting().then((_) => runApp(MainApp()));
+void main() async {
+  await initializeDateFormatting();
+  await DB.ensureDB();
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
