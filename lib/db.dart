@@ -8,7 +8,6 @@ class DB {
 
   static Future<void> ensureDB() async {
     final dir = await getApplicationDocumentsDirectory();
-    await dir.create(recursive: true);
     final dbPath = join(dir.path, 'salary_calc_database.db');
 
     _instance = await databaseFactoryIo.openDatabase(dbPath);
