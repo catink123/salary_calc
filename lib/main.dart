@@ -11,6 +11,7 @@ import 'package:salary_calc/settings/settings.dart';
 import 'package:salary_calc/shift_calendar.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting();
   await DB.ensureDB();
   runApp(MainApp());
