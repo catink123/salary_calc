@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salary_calc/inputs/double_field.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EntryDialog extends StatefulWidget {
   const EntryDialog({
@@ -57,16 +58,16 @@ class _EntryDialogState extends State<EntryDialog> {
           children: [
             TextFormField(
               initialValue: title,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Title',
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: AppLocalizations.of(context)!.titleLabel,
               ),
               onChanged: (value) {
                 setState(() => title = value);
               },
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter a title';
+                  return AppLocalizations.of(context)!.titleFieldValidityFail;
                 }
                 return null;
               },
@@ -75,7 +76,7 @@ class _EntryDialogState extends State<EntryDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Hours', style: Theme.of(context).textTheme.titleMedium),
+                Text(AppLocalizations.of(context)!.hoursLabel, style: Theme.of(context).textTheme.titleMedium),
                 IntrinsicWidth(
                   child: DoubleField(
                     value: hoursStr,
@@ -99,7 +100,7 @@ class _EntryDialogState extends State<EntryDialog> {
         ),
         TextButton(
           onPressed: _onCancelPress,
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.cancel),
         ),
       ],
     );

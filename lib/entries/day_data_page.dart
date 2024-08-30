@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:salary_calc/entries/dialogs/entry_dialog.dart';
 import 'package:salary_calc/entries/calendar_data.dart';
 import 'package:salary_calc/settings/settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DayDataEntryTile extends StatelessWidget {
   const DayDataEntryTile({
@@ -62,8 +63,8 @@ class DayDataEntryTile extends StatelessWidget {
       key: ValueKey(title),
       child: ListTile(
         title: Text(title, style: Theme.of(context).textTheme.titleMedium),
-        trailing:
-            Text('$hours hours', style: Theme.of(context).textTheme.bodyMedium),
+        trailing: Text(AppLocalizations.of(context)!.hours(hours),
+            style: Theme.of(context).textTheme.bodyMedium),
       ),
     );
   }
@@ -86,8 +87,8 @@ class DayDataPage extends StatelessWidget {
       barrierDismissible: false,
       context: context,
       builder: (context) => EntryDialog(
-        title: const Text('Edit an entry'),
-        confirmText: const Text('Edit'),
+        title: Text(AppLocalizations.of(context)!.editAnEntry),
+        confirmText: Text(AppLocalizations.of(context)!.edit),
         initialTitle: title,
         initialHours: hours,
       ),
@@ -145,26 +146,45 @@ class DayDataPage extends StatelessWidget {
   Widget buildNormPercentageBar(BuildContext context, DayData dayData) {
     final settings = context.watch<Settings>();
 
-    final normPercentage = dayData.values.fold(
-          0.0,
-          (previousValue, element) => previousValue + element,
-        ) /
-        settings.shiftNorm;
+    final totalHours = dayData.values.fold(
+      0.0,
+      (previousValue, element) => previousValue + element,
+    );
+
+    final normPercentage = totalHours / settings.shiftNorm;
 
     final percentageValueStr = (normPercentage * 100).toStringAsFixed(2);
 
     return BottomAppBar(
-      height: 50.0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      height: 96.0,
+      child: Column(
         children: [
-          Text(
-            'Norm Percentage',
-            style: Theme.of(context).textTheme.titleMedium,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.normPercentage,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(
+                '$percentageValueStr%',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
           ),
-          Text(
-            '$percentageValueStr%',
-            style: Theme.of(context).textTheme.bodyLarge,
+          const SizedBox(height: 20.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.totalHours,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(
+                AppLocalizations.of(context)!.hours(totalHours),
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
           ),
         ],
       ),
@@ -175,9 +195,9 @@ class DayDataPage extends StatelessWidget {
     final MapEntry<String, double>? newEntry = await showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (context) => const EntryDialog(
-        title: Text('Add a new entry'),
-        confirmText: Text('Add'),
+      builder: (context) => EntryDialog(
+        title: Text(AppLocalizations.of(context)!.addANewEntry),
+        confirmText: Text(AppLocalizations.of(context)!.add),
       ),
     );
 
@@ -188,8 +208,8 @@ class DayDataPage extends StatelessWidget {
         if (calendarData[day]!.containsKey(newEntry.key)) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content:
-                  Text('Entry with title "${newEntry.key}" already exists!'),
+              content: Text(AppLocalizations.of(context)!
+                  .entryAlreadyExists(newEntry.key)),
             ),
           );
         }
@@ -214,8 +234,8 @@ class DayDataPage extends StatelessWidget {
     Widget noEntriesView = Center(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: const Text(
-          'No entries. Add new ones using the button in the corner.',
+        child: Text(
+          AppLocalizations.of(context)!.noEntries,
           textAlign: TextAlign.center,
         ),
       ),

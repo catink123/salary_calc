@@ -60,7 +60,7 @@ class _ShiftCalendarState extends State<ShiftCalendar> {
       lastDay: lastDay,
       shouldFillViewport: true,
       eventLoader: (day) => _eventLoader(day, calendarData),
-      locale: Intl.getCurrentLocale(),
+      locale: Intl.systemLocale,
       availableCalendarFormats: const {CalendarFormat.month: 'Месяц'},
       calendarBuilders: CalendarBuilders(
         markerBuilder: (context, day, events) {

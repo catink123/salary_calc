@@ -2,6 +2,7 @@ import 'package:collection_providers/collection_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/intl_standalone.dart';
 import 'package:provider/provider.dart';
 import 'package:salary_calc/db.dart';
 import 'package:salary_calc/entries/calendar_data.dart';
@@ -9,9 +10,12 @@ import 'package:salary_calc/entries/day_data_page.dart';
 import 'package:salary_calc/settings/settings_page.dart';
 import 'package:salary_calc/settings/settings.dart';
 import 'package:salary_calc/shift_calendar.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Intl.systemLocale = await findSystemLocale();
   await initializeDateFormatting();
   await DB.ensureDB();
   runApp(MainApp());
@@ -31,6 +35,16 @@ class MainApp extends StatelessWidget {
       ],
       child: MaterialApp(
         home: const MainPage(),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('ru'),
+        ],
         theme: ThemeData(
           useMaterial3: true,
           colorSchemeSeed: Colors.purpleAccent,
@@ -95,11 +109,11 @@ class _MainPageState extends State<MainPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Monthly Norm Percentage',
+                    AppLocalizations.of(context)!.monthlyNormPercentage,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Text(
-                    'for ${DateFormat.MMMM().format(focusedDate)}',
+                    AppLocalizations.of(context)!.forMonth(focusedDate),
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ],
@@ -116,7 +130,7 @@ class _MainPageState extends State<MainPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Estimated Pay',
+                AppLocalizations.of(context)!.estimatedSalary,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               Text(
@@ -150,7 +164,7 @@ class _MainPageState extends State<MainPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Salary Calculator'),
+        title: Text(AppLocalizations.of(context)!.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),

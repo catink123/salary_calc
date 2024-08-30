@@ -1,0 +1,57 @@
+{
+    "@@locale": "en",
+    "title": "Salary Calculator",
+    "@title": {
+        "description": "Application Title"
+    },
+    "monthlyNormPercentage": "Monthly Norm Percentage",
+    "estimatedSalary": "Estimated Salary",
+    "forMonth": "for {month}",
+    "@forMonth": {
+        "description": "Used for displaying a month name",
+        "placeholders": {
+            "month": {
+                "type": "DateTime",
+                "format": "MMMM"
+            }
+        }
+    },
+    "settings": "Settings",
+    "dayConfiguration": "Day Configuration",
+    "shiftDuration": "Shift Duration",
+    "shiftOffset": "Shift Offset",
+    "weekendDuration": "Weekend Duration",
+    "useShiftDuration": "Use Shift Duration",
+    "normConfiguration": "Norm Configuration",
+    "shiftNorm": "Shift Norm",
+    "miscellaneous": "Miscellaneous",
+    "currency": "Currency",
+    "noEntries": "No entries. Add new ones using the button in the corner.",
+    "addANewEntry": "Add a new entry",
+    "editAnEntry": "Edit an entry",
+    "titleLabel": "Title",
+    "hoursLabel": "Hours",
+    "add": "Add",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "titleFieldValidityFail": "Please enter a title",
+    "entryAlreadyExists": "Entry with the title '{title}' already exists!",
+    "@entryAlreadyExists": {
+        "placeholders": {
+            "title": {
+                "type": "String"
+            }
+        }
+    },
+    "normPercentage": "Norm Percentage",
+    "hours": "{amount} hours",
+    "@hours": {
+        "description": "hours",
+        "placeholders": {
+            "amount": {
+                "type": "double"
+            }
+        }
+    },
+    "totalHours": "Total Hours"
+}

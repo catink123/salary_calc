@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:salary_calc/inputs/number_field.dart';
 import 'package:salary_calc/settings/settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TitledPane extends StatelessWidget {
   const TitledPane({
@@ -82,15 +83,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(AppLocalizations.of(context)!.settings),
       ),
       body: ListView(
         padding: const EdgeInsets.all(8.0),
         children: [
-          buildSectionTitle(context, text: 'Day Configuration'),
+          buildSectionTitle(context, text: AppLocalizations.of(context)!.dayConfiguration),
           const SizedBox(height: 8.0),
           TitledPane(
-            title: 'Shift Duration',
+            title: AppLocalizations.of(context)!.shiftDuration,
             child: IntrinsicWidth(
               child: NumberField(
                 value: settings.shiftDuration,
@@ -100,7 +101,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           const SizedBox(height: 8.0),
           TitledPane(
-            title: 'Shift Offset',
+            title: AppLocalizations.of(context)!.shiftOffset,
             child: IntrinsicWidth(
               child: NumberField(
                 value: settings.shiftOffset,
@@ -111,7 +112,7 @@ class _SettingsPageState extends State<SettingsPage> {
           const SizedBox(height: 8.0),
           TitledPane(
             direction: Axis.vertical,
-            title: 'Weekend Duration',
+            title: AppLocalizations.of(context)!.weekendDuration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -123,7 +124,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       onChanged: (value) => settings.weekendDuration =
                           (value ?? false) ? null : settings.shiftDuration,
                     ),
-                    Text('Use Shift Duration',
+                    Text(AppLocalizations.of(context)!.useShiftDuration,
                         style: Theme.of(context).textTheme.labelMedium),
                     const Spacer(),
                     IntrinsicWidth(
@@ -139,10 +140,10 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           const SizedBox(height: 8.0),
-          buildSectionTitle(context, text: 'Norm Configuration'),
+          buildSectionTitle(context, text: AppLocalizations.of(context)!.normConfiguration),
           const SizedBox(height: 8.0),
           TitledPane(
-            title: 'Shift Norm',
+            title: AppLocalizations.of(context)!.shiftNorm,
             child: IntrinsicWidth(
               child: NumberField(
                 value: settings.shiftNorm,
@@ -151,10 +152,10 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           const SizedBox(height: 8.0),
-          buildSectionTitle(context, text: 'Miscellaneous'),
+          buildSectionTitle(context, text: AppLocalizations.of(context)!.miscellaneous),
           const SizedBox(height: 8.0),
           TitledPane(
-            title: 'Currency',
+            title: AppLocalizations.of(context)!.currency,
             child: IntrinsicWidth(
               child: TextField(
                 decoration: const InputDecoration(
