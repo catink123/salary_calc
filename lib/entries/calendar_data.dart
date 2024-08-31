@@ -14,7 +14,7 @@ class CalendarData {
   Future<void> _saveData() async {
     await _store
         .records(data.keys.map((e) => e.millisecondsSinceEpoch))
-        .put(DB.instance, data.values.toList(), merge: true);
+        .put(DB.instance, data.values.toList());
   }
 
   void _init() {
