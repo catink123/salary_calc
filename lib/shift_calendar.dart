@@ -11,8 +11,11 @@ class ShiftCalendar extends StatefulWidget {
     required this.shiftDuration,
     required this.shiftOffset,
     required this.focusedDay,
+    required this.customEnabledDates,
     this.onDaySelected,
+    this.onDayLongPressed,
     this.onPageChanged,
+    this.onDisabledDayLongPressed,
     this.weekendDuration,
   });
 
@@ -20,7 +23,10 @@ class ShiftCalendar extends StatefulWidget {
   final int shiftDuration;
   final int shiftOffset;
   final int? weekendDuration;
+  final List<DateTime> customEnabledDates;
   final void Function(DateTime selectedDay, DateTime focusedDay)? onDaySelected;
+  final void Function(DateTime selectedDay)? onDayLongPressed;
+  final void Function(DateTime day)? onDisabledDayLongPressed;
   final void Function(DateTime focusedDay)? onPageChanged;
 
   @override
@@ -35,6 +41,10 @@ class _ShiftCalendarState extends State<ShiftCalendar> {
       calendarData[day]?.entries.toList() ?? [];
 
   bool _shiftDaysPredicate(DateTime day) {
+    if (widget.customEnabledDates.contains(day)) {
+      return true;
+    }
+
     final dayFromYearStart = DateTimeRange(
       start: DateTime.utc(day.year, 1, 1),
       end: day,
@@ -85,6 +95,9 @@ class _ShiftCalendarState extends State<ShiftCalendar> {
               onPressed: widget.onDaySelected != null
                   ? () => widget.onDaySelected!(day, focusedDay)
                   : null,
+              onLongPress: widget.onDayLongPressed != null
+                  ? () => widget.onDayLongPressed!(day)
+                  : null,
               style: FilledButton.styleFrom(padding: EdgeInsets.zero),
               child: Text(day.day.toString()),
             ),
@@ -108,6 +121,7 @@ class _ShiftCalendarState extends State<ShiftCalendar> {
       holidayPredicate: (day) => false,
       startingDayOfWeek: StartingDayOfWeek.monday,
       onPageChanged: widget.onPageChanged,
+      onDisabledDayLongPressed: widget.onDisabledDayLongPressed,
     );
   }
 }

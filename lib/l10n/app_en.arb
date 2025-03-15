@@ -53,5 +53,40 @@
             }
         }
     },
-    "totalHours": "Total Hours"
+    "totalHours": "Total Hours",
+    "entryRemoved": "Entry '{title}' was removed.",
+    "@entryRemoved": {
+        "description": "message for entry removal",
+        "placeholders": {
+            "title": {
+                "type": "String"
+            }
+        }
+    },
+    "restore": "Restore",
+    "yes": "Yes",
+    "no": "No",
+    "deleteCD": "Delete Custom Day",
+    "addCD": "Add Custom Day",
+    "deleteCDPrompt": "Would you like to remove the custom day ({day}) from the calendar?",
+    "@deleteCDPrompt": {
+        "description": "message for custom day deletion dialog",
+        "placeholders": {
+            "day": {
+                "type": "DateTime",
+                "format": "yMMMMd"
+            }
+        }
+    },
+    "addCDPrompt": "Would you like to add a custom day ({day}) to the calendar?",
+    "@addCDPrompt": {
+        "description": "message for custom day addition dialog",
+        "placeholders": {
+            "day": {
+                "type": "DateTime",
+                "format": "yMMMMd"
+            }
+        }
+    }
+
 }

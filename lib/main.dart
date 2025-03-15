@@ -97,7 +97,7 @@ class _MainPageState extends State<MainPage> {
         (settings.currency.isNotEmpty ? ' ${settings.currency}' : '');
 
     return BottomAppBar(
-      height: 110.0,
+      height: 160.0,
       child: Column(
         children: [
           Row(
@@ -120,6 +120,21 @@ class _MainPageState extends State<MainPage> {
               ),
               Text(
                 monthlyPercentStr,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+          ),
+          const SizedBox(height: 20.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.totalHours,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(
+                AppLocalizations.of(context)!.hours(hoursInMonth),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ],
@@ -158,6 +173,82 @@ class _MainPageState extends State<MainPage> {
     return (daysInAMonth / shiftCycle * shiftDuration).ceil() * shiftNorm;
   }
 
+  Widget buildDayCreationDialog(BuildContext context, DateTime day) {
+    return AlertDialog(
+      title: Text(AppLocalizations.of(context)!.addCD),
+      content: Text(AppLocalizations.of(context)!.addCDPrompt(day)),
+      actions: [
+        TextButton(
+          child: Text(AppLocalizations.of(context)!.no),
+          onPressed: () {
+            Navigator.of(context).pop(false);
+          },
+        ),
+        TextButton(
+          child: Text(AppLocalizations.of(context)!.yes),
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget buildDayDeletionDialog(BuildContext context, DateTime day) {
+    return AlertDialog(
+      title: Text(AppLocalizations.of(context)!.deleteCD),
+      content: Text(AppLocalizations.of(context)!.deleteCDPrompt(day)),
+      actions: [
+        TextButton(
+          child: Text(AppLocalizations.of(context)!.no),
+          onPressed: () {
+            Navigator.of(context).pop(false);
+          },
+        ),
+        TextButton(
+          child: Text(AppLocalizations.of(context)!.yes),
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+        ),
+      ],
+    );
+  }
+
+  Future<void> promptCustomDayCreation(
+      BuildContext context, DateTime day) async {
+    final dialogResult = await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => buildDayCreationDialog(context, day),
+    );
+
+    final settings = context.read<Settings>();
+
+    if (dialogResult == true) {
+      settings.customEnabledDates = settings.customEnabledDates.followedBy([day]).toList();
+    }
+  }
+
+  Future<void> dayLongPress(BuildContext context, DateTime day) async {
+    final settings = context.read<Settings>();
+    if (settings.customEnabledDates.contains(day)) {
+      final dialogResult = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => buildDayDeletionDialog(context, day),
+      );
+
+      if (dialogResult == true) {
+        settings.customEnabledDates = settings.customEnabledDates.where((currentDay) => currentDay != day).toList();
+
+        final calendarData = context.read<MapChangeNotifier<DateTime, DayData>>();
+
+        calendarData.remove(day);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<Settings>();
@@ -183,6 +274,9 @@ class _MainPageState extends State<MainPage> {
           shiftDuration: settings.shiftDuration,
           shiftOffset: settings.shiftOffset,
           weekendDuration: settings.weekendDuration,
+          customEnabledDates: settings.customEnabledDates,
+          onDisabledDayLongPressed: (day) => promptCustomDayCreation(context, day),
+          onDayLongPressed: (day) => dayLongPress(context, day),
           onDaySelected: (selectedDay, focusedDay) {
             Navigator.push(
               context,

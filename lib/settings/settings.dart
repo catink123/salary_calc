@@ -20,6 +20,8 @@ class Settings with ChangeNotifier {
   PercentToPayMap _ptpMap = _defaultPTPMap;
   String _currency = "";
 
+  List<DateTime> _customEnabledDates = [];
+
   final _store = StoreRef<String, dynamic>('settings');
 
   void _init() {
@@ -34,6 +36,10 @@ class Settings with ChangeNotifier {
         _store.record('ptpMap').getSync(DB.instance) as Map<double, int>? ??
             _defaultPTPMap;
     _currency = _store.record('currency').getSync(DB.instance) as String? ?? '';
+    final customEnabledDates = _store.record('customEnabledDates').getSync(DB.instance) as Iterable<Object?>?;
+    if (customEnabledDates != null) {
+      _customEnabledDates = customEnabledDates.map((el) => DateTime.parse(el as String)).toList();
+    }
 
     notifyListeners();
   }
@@ -48,6 +54,8 @@ class Settings with ChangeNotifier {
   int get shiftNorm => _shiftNorm;
   PercentToPayMap get ptpMap => _ptpMap;
   String get currency => _currency;
+
+  List<DateTime> get customEnabledDates => _customEnabledDates;
 
   set shiftOffset(int val) {
     _shiftOffset = val;
@@ -87,6 +95,13 @@ class Settings with ChangeNotifier {
   set currency(String val) {
     _currency = val;
     _store.record('currency').put(DB.instance, val);
+    notifyListeners();
+  }
+
+  set customEnabledDates(List<DateTime> val) {
+    _customEnabledDates = val;
+    final convertedEnabledDates = val.map((el) => el.toIso8601String()).toList();
+    _store.record('customEnabledDates').put(DB.instance, convertedEnabledDates);
     notifyListeners();
   }
 }

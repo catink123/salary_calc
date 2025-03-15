@@ -83,12 +83,11 @@ class DayDataPage extends StatelessWidget {
     required String title,
     required double hours,
   }) async {
-    final MapEntry<String, double>? dialogResult = await showDialog(
-      barrierDismissible: false,
+    final MapEntry<String, double>? dialogResult = await showModalBottomSheet(
       context: context,
       builder: (context) => EntryDialog(
-        title: Text(AppLocalizations.of(context)!.editAnEntry),
-        confirmText: Text(AppLocalizations.of(context)!.edit),
+        title: AppLocalizations.of(context)!.editAnEntry,
+        confirmText: AppLocalizations.of(context)!.edit,
         initialTitle: title,
         initialHours: hours,
       ),
@@ -118,10 +117,29 @@ class DayDataPage extends StatelessWidget {
 
     void onRemove(String key) {
       final calendarData = context.read<MapChangeNotifier<DateTime, DayData>>();
+      final removedEntry =
+          calendarData[day]!.entries.firstWhere((entry) => entry.key == key);
       calendarData.update(
         day,
         (dayData) => Map.fromEntries(
           dayData.entries.where((entry) => entry.key != key),
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.entryRemoved(key)),
+          action: SnackBarAction(
+            label: AppLocalizations.of(context)!.restore,
+            onPressed: () {
+              calendarData.update(
+                day,
+                (value) => Map.fromEntries(
+                  value.entries.followedBy([removedEntry]),
+                ),
+              );
+            },
+          ),
         ),
       );
     }
@@ -192,12 +210,11 @@ class DayDataPage extends StatelessWidget {
   }
 
   Future<void> showNewEntryDialog(BuildContext context) async {
-    final MapEntry<String, double>? newEntry = await showDialog(
-      barrierDismissible: false,
+    final MapEntry<String, double>? newEntry = await showModalBottomSheet(
       context: context,
       builder: (context) => EntryDialog(
-        title: Text(AppLocalizations.of(context)!.addANewEntry),
-        confirmText: Text(AppLocalizations.of(context)!.add),
+        title: AppLocalizations.of(context)!.addANewEntry,
+        confirmText: AppLocalizations.of(context)!.add,
       ),
     );
 
