@@ -12,4 +12,8 @@ jobs:
           channel: stable
           flutter-version: 3.24.1
       - run: flutter pub get
-      - run: flutter build apk
+      - run: flutter build apk --split-per-abi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-android
+          path: build/app/outputs/flutter-apk
