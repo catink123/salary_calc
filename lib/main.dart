@@ -12,6 +12,7 @@ import 'package:salary_calc/settings/settings.dart';
 import 'package:salary_calc/shift_calendar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -254,14 +255,14 @@ class _MainPageState extends State<MainPage> {
     final settings = context.watch<Settings>();
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: MorphingAppBar(
         title: Text(AppLocalizations.of(context)!.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(
+              SwipeablePageRoute(
                 builder: (context) => const SettingsPage(),
               ),
             ),
@@ -280,7 +281,8 @@ class _MainPageState extends State<MainPage> {
           onDaySelected: (selectedDay, focusedDay) {
             Navigator.push(
               context,
-              MaterialPageRoute(
+              SwipeablePageRoute(
+                canOnlySwipeFromEdge: true,
                 builder: (context) => DayDataPage(day: selectedDay),
               ),
             );

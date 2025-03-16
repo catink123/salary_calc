@@ -6,6 +6,7 @@ import 'package:salary_calc/entries/dialogs/entry_dialog.dart';
 import 'package:salary_calc/entries/calendar_data.dart';
 import 'package:salary_calc/settings/settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 class DayDataEntryTile extends StatelessWidget {
   const DayDataEntryTile({
@@ -277,7 +278,7 @@ class DayDataPage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(DateFormat.yMMMd().format(day))),
+      appBar: MorphingAppBar(title: Text(DateFormat.yMMMd().format(day))),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showNewEntryDialog(context),
         child: const Icon(Icons.add),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:salary_calc/inputs/number_field.dart';
 import 'package:salary_calc/settings/settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 class TitledPane extends StatelessWidget {
   const TitledPane({
@@ -82,7 +83,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final settings = context.watch<Settings>();
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: MorphingAppBar(
         title: Text(AppLocalizations.of(context)!.settings),
       ),
       body: ListView(
