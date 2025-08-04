@@ -7,11 +7,11 @@ import 'package:provider/provider.dart';
 import 'package:salary_calc/db.dart';
 import 'package:salary_calc/entries/calendar_data.dart';
 import 'package:salary_calc/entries/day_data_page.dart';
+import 'package:salary_calc/l10n/app_localizations.dart';
 import 'package:salary_calc/settings/settings_page.dart';
 import 'package:salary_calc/settings/settings.dart';
 import 'package:salary_calc/shift_calendar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 void main() async {
@@ -71,10 +71,11 @@ class _MainPageState extends State<MainPage> {
     final settings = context.read<Settings>();
     final dayDataForMonth = context.select<MapChangeNotifier<DateTime, DayData>,
         Iterable<MapEntry<DateTime, DayData>>>(
-      (map) =>
-          map.entries.where((entry) => entry.key.month == focusedDate.month),
+      (map) => map.entries.where((entry) =>
+          entry.key.month == focusedDate.month &&
+          entry.key.year == focusedDate.year),
     );
-    final hoursInMonth = dayDataForMonth
+    final totalHours = dayDataForMonth
         .map((entry) => entry.value)
         .map((dayData) => dayData.values.fold(0.0, (prev, cur) => prev + cur))
         .fold(0.0, (prev, cur) => prev + cur);
@@ -86,76 +87,96 @@ class _MainPageState extends State<MainPage> {
       shiftNorm: settings.shiftNorm,
     );
 
-    final monthlyPercent = hoursInMonth / monthlyNorm;
+    final monthlyPercent = totalHours / monthlyNorm;
     final monthlyPercentStr = '${(monthlyPercent * 100).toStringAsFixed(2)}%';
 
     final payPerHour = settings.ptpMap.entries
         .firstWhere((entry) => monthlyPercent <= entry.key)
         .value;
 
-    final pay = payPerHour * hoursInMonth;
+    final pay = payPerHour * totalHours;
     final payStr = pay.toStringAsFixed(2) +
         (settings.currency.isNotEmpty ? ' ${settings.currency}' : '');
 
-    return BottomAppBar(
-      height: 160.0,
-      child: Column(
+    List<Widget> listedWidgets = [];
+    if (settings.showMNP) {
+      listedWidgets.add(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.monthlyNormPercentage,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.forMonth(focusedDate),
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+              ],
+            ),
+            Text(
+              monthlyPercentStr,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        )
+      );
+    }
+
+    listedWidgets.add(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.monthlyNormPercentage,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Text(
-                    AppLocalizations.of(context)!.forMonth(focusedDate),
-                    style: Theme.of(context).textTheme.labelMedium,
-                  ),
-                ],
-              ),
-              Text(
-                monthlyPercentStr,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ],
+          Text(
+            AppLocalizations.of(context)!.totalHours,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          const SizedBox(height: 20.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.totalHours,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              Text(
-                AppLocalizations.of(context)!.hours(hoursInMonth),
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.estimatedSalary,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              Text(
-                payStr,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ],
+          Text(
+            AppLocalizations.of(context)!.hours(totalHours),
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
         ],
+      )
+    );
+
+    if (settings.showEstimatedSalary) {
+      listedWidgets.add(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.estimatedSalary,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Text(
+              payStr,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        )
+      );
+    }
+
+    return IntrinsicHeight(
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsetsGeometry.all(12.0),
+          child: Column(
+            children: [
+              for (var i = 0; i < listedWidgets.length; ++i) ...[
+                listedWidgets[i],
+                if (i < listedWidgets.length - 1) const SizedBox(height: 20.0)
+              ]
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -227,7 +248,8 @@ class _MainPageState extends State<MainPage> {
     final settings = context.read<Settings>();
 
     if (dialogResult == true) {
-      settings.customEnabledDates = settings.customEnabledDates.followedBy([day]).toList();
+      settings.customEnabledDates =
+          settings.customEnabledDates.followedBy([day]).toList();
     }
   }
 
@@ -241,9 +263,12 @@ class _MainPageState extends State<MainPage> {
       );
 
       if (dialogResult == true) {
-        settings.customEnabledDates = settings.customEnabledDates.where((currentDay) => currentDay != day).toList();
+        settings.customEnabledDates = settings.customEnabledDates
+            .where((currentDay) => currentDay != day)
+            .toList();
 
-        final calendarData = context.read<MapChangeNotifier<DateTime, DayData>>();
+        final calendarData =
+            context.read<MapChangeNotifier<DateTime, DayData>>();
 
         calendarData.remove(day);
       }
@@ -276,7 +301,8 @@ class _MainPageState extends State<MainPage> {
           shiftOffset: settings.shiftOffset,
           weekendDuration: settings.weekendDuration,
           customEnabledDates: settings.customEnabledDates,
-          onDisabledDayLongPressed: (day) => promptCustomDayCreation(context, day),
+          onDisabledDayLongPressed: (day) =>
+              promptCustomDayCreation(context, day),
           onDayLongPressed: (day) => dayLongPress(context, day),
           onDaySelected: (selectedDay, focusedDay) {
             Navigator.push(

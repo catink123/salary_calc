@@ -49,7 +49,11 @@
         "description": "hours",
         "placeholders": {
             "amount": {
-                "type": "double"
+                "type": "double",
+                "format": "decimalPatternDigits",
+                "optionalParameters": {
+                    "decimalDigits": 2
+                }
             }
         }
     },
@@ -87,6 +91,7 @@
                 "format": "yMMMMd"
             }
         }
-    }
-
+    },
+    "showMNP": "Show Monthly Norm",
+    "showEstimatedSalary": "Show Estimated Salary"
 }

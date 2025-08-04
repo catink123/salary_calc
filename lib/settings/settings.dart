@@ -22,24 +22,36 @@ class Settings with ChangeNotifier {
 
   List<DateTime> _customEnabledDates = [];
 
+  bool _showMNP = true;
+  bool _showEstimatedSalary = true;
+
   final _store = StoreRef<String, dynamic>('settings');
 
+  RecordRef<String, dynamic> _getRecord(String key) {
+    return _store.record(key);
+  }
+
+  dynamic _get(String key) {
+    return _getRecord(key).getSync(DB.instance);
+  }
+
+  void _put(String key, dynamic val) {
+    _getRecord(key).put(DB.instance, val);
+  }
+
   void _init() {
-    _shiftOffset =
-        _store.record('shiftOffset').getSync(DB.instance) as int? ?? 0;
-    _shiftDuration =
-        _store.record('shiftDuration').getSync(DB.instance) as int? ?? 3;
-    _weekendDuration =
-        _store.record('weekendDuration').getSync(DB.instance) as int?;
-    _shiftNorm = _store.record('shiftNorm').getSync(DB.instance) as int? ?? 12;
-    _ptpMap =
-        _store.record('ptpMap').getSync(DB.instance) as Map<double, int>? ??
-            _defaultPTPMap;
-    _currency = _store.record('currency').getSync(DB.instance) as String? ?? '';
-    final customEnabledDates = _store.record('customEnabledDates').getSync(DB.instance) as Iterable<Object?>?;
+    _shiftOffset = _get('shiftOffset') as int? ?? 0;
+    _shiftDuration = _get('shiftDuration') as int? ?? 3;
+    _weekendDuration = _get('weekendDuration') as int?;
+    _shiftNorm = _get('shiftNorm') as int? ?? 12;
+    _ptpMap = _get('ptpMap') as Map<double, int>? ?? _defaultPTPMap;
+    _currency = _get('currency') as String? ?? '';
+    final customEnabledDates = _get('customEnabledDates') as Iterable<Object?>?;
     if (customEnabledDates != null) {
       _customEnabledDates = customEnabledDates.map((el) => DateTime.parse(el as String)).toList();
     }
+    _showMNP = _get('showMNP') as bool? ?? true;
+    _showEstimatedSalary = _get('showEstimatedSalary') as bool? ?? true;
 
     notifyListeners();
   }
@@ -56,6 +68,9 @@ class Settings with ChangeNotifier {
   String get currency => _currency;
 
   List<DateTime> get customEnabledDates => _customEnabledDates;
+
+  bool get showMNP => _showMNP;
+  bool get showEstimatedSalary => _showEstimatedSalary;
 
   set shiftOffset(int val) {
     _shiftOffset = val;
@@ -102,6 +117,18 @@ class Settings with ChangeNotifier {
     _customEnabledDates = val;
     final convertedEnabledDates = val.map((el) => el.toIso8601String()).toList();
     _store.record('customEnabledDates').put(DB.instance, convertedEnabledDates);
+    notifyListeners();
+  }
+
+  set showMNP(bool val) {
+    _showMNP = val;
+    _put('showMNP', val);
+    notifyListeners();
+  }
+
+  set showEstimatedSalary(bool val) {
+    _showEstimatedSalary = val;
+    _put('showEstimatedSalary', val);
     notifyListeners();
   }
 }

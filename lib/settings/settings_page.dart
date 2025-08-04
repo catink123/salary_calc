@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:salary_calc/inputs/number_field.dart';
+import 'package:salary_calc/l10n/app_localizations.dart';
 import 'package:salary_calc/settings/settings.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 class TitledPane extends StatelessWidget {
@@ -167,6 +167,16 @@ class _SettingsPageState extends State<SettingsPage> {
                 onChanged: (value) => settings.currency = value,
               ),
             ),
+          ),
+          const SizedBox(height: 8.0),
+          TitledPane(
+            title: AppLocalizations.of(context)!.showMNP,
+            child: Checkbox(value: settings.showMNP, onChanged: (value) => settings.showMNP = value!),
+          ),
+          const SizedBox(height: 8.0),
+          TitledPane(
+            title: AppLocalizations.of(context)!.showEstimatedSalary,
+            child: Checkbox(value: settings.showEstimatedSalary, onChanged: (value) => settings.showEstimatedSalary = value!),
           ),
         ],
       ),
